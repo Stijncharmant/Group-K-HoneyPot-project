@@ -1,0 +1,93 @@
+﻿@page
+@model PartsInventoryWebApp.Pages.InventoryModel
+@{
+}
+
+<div class="inventory-container">
+
+    <div class="inventory-header">
+        <div class="header-titles">
+            <h1 class="page-title">Inventory</h1>
+            <p class="text-muted text-sm">Manage your parts, pricing, and current stock levels.</p>
+        </div>
+
+        <div class="inventory-actions">
+            <div class="search-wrapper">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text"
+                       class="form-control search-input"
+                       placeholder="Search parts by name or SKU..." />
+            </div>
+
+            <button class="btn btn-primary btn-add">
+                <i class="bi bi-plus-lg"></i> Add Part
+            </button>
+        </div>
+    </div>
+
+    <div class="inventory-card">
+        <div class="table-responsive">
+            <table class="table modern-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">Part Details</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var part in Model.Parts)
+                    {
+                        <tr>
+                            <td>
+                                <div class="part-info">
+                                    <span class="part-name">@part.Name</span>
+                                    <span class="part-sku">@part.Sku</span>
+                                </div>
+                            </td>
+                            <td class="part-price">€@part.Price.ToString("0.00")</td>
+
+                            <td>
+                                @if (part.Quantity <= 5)
+                                {
+                                    <span class="modern-badge badge-danger">
+                                        <span class="status-dot"></span> @part.Quantity in stock
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="modern-badge badge-success">
+                                        <span class="status-dot"></span> @part.Quantity in stock
+                                    </span>
+                                }
+                            </td>
+
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-action">
+                                    Edit
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="pagination-container">
+        <button class="btn btn-outline-secondary btn-paginate" @(Model.CurrentPage == 1 ? "disabled" : "")>
+            Previous
+        </button>
+
+        <span class="pagination-text">
+            Page <strong>@Model.CurrentPage</strong> of <strong>@Model.TotalPages</strong>
+        </span>
+
+        <button class="btn btn-outline-secondary btn-paginate" @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")>
+            Next
+        </button>
+    </div>
+
+</div>
