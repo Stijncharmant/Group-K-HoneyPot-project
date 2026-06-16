@@ -21,7 +21,6 @@ namespace LogicLayer.Management
 
         public void AddEmployee(string firstName, string lastName, string email, string password, bool isAdmin)
         {
-            // Instantiates the rich domain model (which executes internal validation guards)
             Employee employee = new Employee(firstName, lastName, email, password, isAdmin);
 
             _employeeDataAccess.AddEmployee(employee);
