@@ -16,16 +16,18 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
+        uses: actions/checkout@v6
       - name: Setup .NET 8
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: "8.0.x"
-
+        # Install into a writable dir; the action's default /usr/share/dotnet
+        # isn't writable on self-hosted / ARC / act / some larger runners.
+        # `runner` is only valid at step scope, so it has to live here.
+        env:
+          DOTNET_INSTALL_DIR: ${{ runner.temp }}/dotnet
       - name: Restore
         run: dotnet restore carparts.sln
-
       - name: Build (Release)
         run: dotnet build carparts.sln -c Release --no-restore
 
@@ -45,7 +47,7 @@ jobs:
             dockerfile: PartsInventoryWebApp/Dockerfile
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
