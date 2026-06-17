@@ -302,3 +302,51 @@ body {
         width: 100%;
     }
 }
+
+.modern-modal {
+    border-radius: 16px !important;
+    background-color: #ffffff;
+    overflow: hidden;
+}
+
+
+.execution-modal {
+    max-width: 380px !important;
+}
+
+
+.logout-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background-color: #fff5f5;
+    border-radius: 50%;
+}
+
+
+.custom-modal-btn {
+    border-radius: 10px !important;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+}
+
+    .custom-modal-btn.btn-light {
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+
+        .custom-modal-btn.btn-light:hover {
+            background-color: #e9ecef;
+            color: #212529;
+        }
+
+    .custom-modal-btn.btn-danger {
+        background-color: #dc3545;
+    }
+
+        .custom-modal-btn.btn-danger:hover {
+            background-color: #bb2d3b;
+            transform: translateY(-1px);
+        }

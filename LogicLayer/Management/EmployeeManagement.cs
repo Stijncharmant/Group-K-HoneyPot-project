@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BCrypt.Net;
 
 namespace LogicLayer.Management
 {
@@ -21,7 +22,9 @@ namespace LogicLayer.Management
 
         public void AddEmployee(string firstName, string lastName, string email, string password, bool isAdmin)
         {
-            Employee employee = new Employee(firstName, lastName, email, password, isAdmin);
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
+            Employee employee = new Employee(firstName, lastName, email, hashedPassword, isAdmin);
 
             _employeeDataAccess.AddEmployee(employee);
         }
@@ -58,6 +61,24 @@ namespace LogicLayer.Management
             _employeeDataAccess.DeleteEmployee(id);
         }
 
+        #endregion
+
+        #region AUTHENTICATE
+
+
+        public Employee? VerifyCredentials(string email, string password)
+        {
+            var employee = _employeeDataAccess.GetEmployeeByEmail(email);
+
+            if(employee == null)
+            {
+                return null;
+            }
+
+            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(password, employee.Password);
+
+            return isPasswordValid ? employee : null;
+        }
         #endregion
     }
 }

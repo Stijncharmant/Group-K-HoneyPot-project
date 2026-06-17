@@ -20,9 +20,11 @@ namespace API
                 ));
 
             builder.Services.AddScoped<PartDataAccess>();
+            builder.Services.AddScoped<EmployeeDataAccess>();
 
             // registering logic layer services
             builder.Services.AddScoped<PartManagement>();
+            builder.Services.AddScoped<EmployeeManagement>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

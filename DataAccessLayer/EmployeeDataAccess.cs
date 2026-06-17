@@ -39,6 +39,10 @@ namespace DataAccessLayer
                 .FirstOrDefault(e => e.Id == id);
         }
 
+        public Employee? GetEmployeeByEmail(string email)
+        {
+            return _context.Employees.FirstOrDefault(e => e.Email == email);
+        }
         #endregion
 
         #region UPDATE
