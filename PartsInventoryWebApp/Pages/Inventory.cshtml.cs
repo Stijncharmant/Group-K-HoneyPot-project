@@ -148,6 +148,45 @@ namespace PartsInventoryWebApp.Pages
             return Page();
         }
 
+        public async Task<IActionResult> OnPostDeletePartAsync(int id)
+        {
+            if (!User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
+
+            if (id <= 0)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid part identification token provided.");
+                await LoadPartsFromApiAsync("https://localhost:7294/Parts");
+                return Page();
+            }
+
+            var client = _httpClientFactory.CreateClient();
+            string apiUrl = $"https://localhost:7294/Parts/{id}";
+
+            try
+            {
+                // Execute the backend soft-delete connection
+                var response = await client.DeleteAsync(apiUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToPage("/Inventory");
+                }
+
+                ModelState.AddModelError(string.Empty, "The system backend rejected the deletion sequence.");
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to communicate with the core API system service.");
+            }
+
+            // Fallback reload if something blocks execution
+            await LoadPartsFromApiAsync("https://localhost:7294/Parts");
+            return Page();
+        }
+
 
         public async Task<IActionResult> OnPostLogoutAsync()
         {

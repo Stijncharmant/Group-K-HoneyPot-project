@@ -26,13 +26,15 @@ namespace DataAccessLayer
 
         public List<Part> GetAllParts()
         {
-            return _context.Parts.ToList();
+            return _context.Parts
+                .Where(p => !p.IsArchived)
+                .ToList();
         }
 
         public Part? GetPartById(int id)
         {
             return _context.Parts
-                .FirstOrDefault(p => p.Id == id);
+                .FirstOrDefault(p => p.Id == id && !p.IsArchived);
         }
 
         #endregion
