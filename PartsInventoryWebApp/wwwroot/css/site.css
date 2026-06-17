@@ -350,3 +350,24 @@ body {
             background-color: #bb2d3b;
             transform: translateY(-1px);
         }
+
+
+/* --- Modern Dashboard Form Modal Framework --- */
+.custom-part-modal {
+    border-radius: 16px !important;
+    background-color: #ffffff;
+}
+
+.modern-input {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 0.75rem !important;
+    font-size: 0.9rem !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+    .modern-input:focus {
+        border-color: #94a3b8 !important;
+        box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.1) !important;
+        outline: none !important;
+    }

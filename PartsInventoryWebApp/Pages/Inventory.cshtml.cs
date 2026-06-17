@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PartsInventoryWebApp.Models;
+using System.Text;
 using System.Text.Json;
-using Microsoft.AspNetCore.Authorization;
 
 namespace PartsInventoryWebApp.Pages
 {
@@ -22,6 +23,9 @@ namespace PartsInventoryWebApp.Pages
 
         public int TotalPages { get; set; } = 5;
 
+        [BindProperty]
+        public PartCreateDto NewPart { get; set; } = new PartCreateDto();
+
         // constructor
         public InventoryModel(IHttpClientFactory httpClientFactory)
         {
@@ -31,24 +35,49 @@ namespace PartsInventoryWebApp.Pages
         // methods
         public async Task OnGetAsync()
         {
-            var client = _httpClientFactory.CreateClient();
+            await LoadPartsFromApiAsync("https://localhost:7294/Parts");
+        }
 
+        public async Task<IActionResult> OnPostAddPartAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                await LoadPartsFromApiAsync("https://localhost:7294/Parts");
+
+                ViewData["KeepModalOpen"] = true;
+                return Page();
+            }
+
+            var client = _httpClientFactory.CreateClient();
             string apiUrl = "https://localhost:7294/Parts";
 
-            var response = await client.GetAsync(apiUrl);
+            var jsonPayload = new StringContent(
+                JsonSerializer.Serialize(NewPart),
+                Encoding.UTF8,
+                "application/json"
+            );
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var json = await response.Content.ReadAsStringAsync();
+                var response = await client.PostAsync(apiUrl, jsonPayload);
 
-                Parts = JsonSerializer.Deserialize<List<PartSummaryDto>>(
-                    json,
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    }) ?? new List<PartSummaryDto>();
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToPage("/Inventory");
+                }
+
+                ModelState.AddModelError(string.Empty, "The server rejected the data.");
             }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to communicate with the backend service API.");
+            }
+
+            await LoadPartsFromApiAsync("https://localhost:7294/Parts");
+            ViewData["KeepModalOpen"] = true;
+            return Page();
         }
+
 
         public async Task<IActionResult> OnPostLogoutAsync()
         {
@@ -57,5 +86,19 @@ namespace PartsInventoryWebApp.Pages
             return RedirectToPage("/Index");
         }
 
+        private async Task LoadPartsFromApiAsync(string apiUrl)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync(apiUrl);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                Parts = JsonSerializer.Deserialize<List<PartSummaryDto>>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }) ?? new List<PartSummaryDto>();
+            }
+        }
     }
 }
