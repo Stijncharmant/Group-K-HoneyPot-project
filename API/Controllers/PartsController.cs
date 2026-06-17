@@ -94,7 +94,6 @@ namespace API.Controllers
             if (existingPart == null)
                 return NotFound($"Part with ID {id} not found.");
 
-            // recreate domain object with same id behavior via reflection-safe update approach
             var part = new Part(
                 updatedPart.Sku,
                 updatedPart.Name,
@@ -106,7 +105,6 @@ namespace API.Controllers
                 updatedPart.ManufacturerId
             );
 
-            // IMPORTANT: EF needs correct ID handling
             typeof(Part)
                 .GetProperty("Id")!
                 .SetValue(part, id);
