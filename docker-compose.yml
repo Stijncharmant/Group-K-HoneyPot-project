@@ -1,0 +1,41 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: API/Dockerfile
+    image: honeypot-api:latest
+    container_name: honeypot-api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: "server=${DB_HOST:-host.docker.internal};port=${DB_PORT:-3306};database=${DB_NAME:-carparts};user=${DB_USER:-root};password=${DB_PASSWORD:-sophie};AllowPublicKeyRetrieval=True;SslMode=Preferred;"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "${API_PORT:-5183}:8080"
+    networks:
+      - honeypot-net
+
+  webapp:
+    build:
+      context: .
+      dockerfile: PartsInventoryWebApp/Dockerfile
+    image: honeypot-webapp:latest
+    container_name: honeypot-webapp
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      ASPNETCORE_URLS: http://+:8080
+      # WebApp -> API over the internal Docker network (not the host).
+      ApiSettings__BaseUrl: "http://api:8080"
+    ports:
+      - "${WEBAPP_PORT:-5123}:8080"
+    depends_on:
+      - api
+    networks:
+      - honeypot-net
+
+networks:
+  honeypot-net:
+    driver: bridge

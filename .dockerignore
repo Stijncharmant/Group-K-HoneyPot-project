@@ -1,0 +1,28 @@
+# Build artifacts
+**/bin/
+**/obj/
+**/out/
+
+# IDE / VS
+**/.vs/
+**/.vscode/
+**/*.user
+**/*.suo
+
+# VCS & CI
+.git
+.gitignore
+.github/
+
+# Docker / compose (not needed inside the image build context)
+**/Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Local env
+.env
+.env.*
+!.env.example
+
+# Docs
+*.md
