@@ -40,6 +40,12 @@ namespace PartsInventoryWebApp.Pages
 
         public async Task<IActionResult> OnPostAddPartAsync()
         {
+
+            if (!User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
+
             if (!ModelState.IsValid)
             {
                 await LoadPartsFromApiAsync("https://localhost:7294/Parts");
